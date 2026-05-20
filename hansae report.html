@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>한세실업 구조적 경쟁력 분석 보고서</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Noto+Sans+KR:wght@300;400;600;700&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0B2545; --navy-light: #1a3a6b; --steel: #2d6a8f;
+    --amber: #E8A020; --amber-light: #f5c842;
+    --gray: #6B7280; --gray-light: #F3F4F6; --border: #D1D5DB;
+    --green: #059669; --red: #DC2626;
+  }
+  body { font-family: 'Noto Sans KR', sans-serif; background: #F8F9FA; color: #1a1a2e; }
+
+  /* HEADER */
+  .cover { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); padding: 52px 64px 44px; position: relative; overflow: hidden; }
+  .cover::before { content:''; position:absolute; top:-80px; right:-80px; width:320px; height:320px; border-radius:50%; background:rgba(232,160,32,0.07); }
+  .cover::after { content:''; position:absolute; bottom:-60px; left:160px; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,0.04); }
+  .cover-inner { display:flex; justify-content:space-between; align-items:flex-start; position:relative; }
+  .cover-label { font-size:11px; color:var(--amber); letter-spacing:3px; text-transform:uppercase; margin-bottom:14px; }
+  .cover-title { font-family:'Noto Serif KR',serif; font-size:42px; font-weight:700; color:#fff; line-height:1.15; }
+  .cover-sub { font-size:15px; color:rgba(255,255,255,0.55); margin-top:8px; }
+  .cover-metrics { display:flex; gap:36px; margin-top:28px; }
+  .cover-metric-label { font-size:10px; color:rgba(255,255,255,0.45); letter-spacing:1px; text-transform:uppercase; }
+  .cover-metric-value { font-size:19px; font-weight:700; color:var(--amber); margin-top:3px; }
+  .cover-right { text-align:right; }
+  .cover-date-label { font-size:11px; color:rgba(255,255,255,0.4); }
+  .cover-date { font-size:13px; color:rgba(255,255,255,0.7); }
+  .buy-badge { margin-top:14px; padding:6px 18px; background:var(--amber); border-radius:4px; display:inline-block; font-size:12px; font-weight:700; color:var(--navy); letter-spacing:1px; }
+  .target-price { font-size:11px; color:rgba(255,255,255,0.4); margin-top:8px; }
+
+  /* NAV */
+  .nav { background:var(--navy); display:flex; flex-wrap:wrap; border-bottom:3px solid var(--amber); }
+  .nav a { padding:12px 20px; color:rgba(255,255,255,0.6); text-decoration:none; font-size:12px; font-weight:400; letter-spacing:0.5px; transition:all .2s; white-space:nowrap; }
+  .nav a:hover, .nav a.active { background:var(--amber); color:var(--navy); font-weight:700; }
+
+  /* MAIN */
+  .main { max-width:1100px; margin:0 auto; padding:44px 36px 80px; }
+
+  /* SECTION TITLE */
+  .section-title { margin-bottom:32px; }
+  .section-title-inner { display:flex; align-items:center; gap:16px; }
+  .section-num { width:42px; height:42px; background:var(--navy); border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .section-num span { color:var(--amber); font-size:17px; font-weight:700; }
+  .section-title h2 { font-size:27px; font-weight:700; color:var(--navy); }
+  .section-title p { font-size:13px; color:var(--gray); margin-top:4px; }
+  .section-divider { height:2px; background:linear-gradient(90deg, var(--amber) 0%, var(--navy) 40%, transparent 100%); margin-top:16px; }
+
+  /* CARDS */
+  .card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:26px 30px; margin-bottom:24px; }
+  .sub-title { font-size:14px; font-weight:700; color:var(--navy-light); margin:0 0 16px; border-left:3px solid var(--amber); padding-left:10px; }
+
+  /* GRID */
+  .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:24px; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px; }
+  .grid-2-1 { display:grid; grid-template-columns:2fr 1fr; gap:20px; margin-bottom:24px; }
+
+  /* METRIC CARDS */
+  .metric-card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:22px 18px; text-align:center; }
+  .metric-label { font-size:11px; color:var(--gray); letter-spacing:1px; }
+  .metric-value { font-size:22px; font-weight:700; color:var(--navy); margin:8px 0 6px; }
+  .metric-change { font-size:12px; font-weight:600; }
+  .up { color:var(--green); }
+  .down { color:var(--red); }
+
+  /* TABLES */
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th { background:var(--navy); color:#fff; padding:10px 14px; text-align:left; font-weight:600; font-size:12px; }
+  td { padding:10px 14px; border-bottom:1px solid var(--border); }
+  tr:nth-child(even) td { background:var(--gray-light); }
+  tr:nth-child(odd) td { background:#fff; }
+  .td-key { font-weight:600; color:var(--navy); background:#f8faff !important; width:38%; }
+
+  /* CHARTS */
+  .chart-container { position:relative; height:300px; margin-bottom:10px; }
+  .chart-note { font-size:11px; color:var(--gray); margin-top:8px; }
+
+  /* PRINCIPLE CARDS */
+  .principle-card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:24px 28px; margin-bottom:20px; }
+  .principle-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; }
+  .principle-title-group { display:flex; align-items:center; gap:12px; }
+  .principle-num { font-size:24px; font-weight:700; }
+  .principle-name { font-size:15px; font-weight:700; font-family:'Noto Sans KR',sans-serif; }
+  .principle-desc { font-size:12px; color:var(--gray); margin-top:4px; }
+  .principle-score { text-align:center; min-width:65px; }
+  .score-num { font-size:30px; font-weight:700; }
+  .score-unit { font-size:10px; color:var(--gray); }
+  .principle-body { display:grid; grid-template-columns:3fr 1fr; gap:16px; }
+  .strength-title { font-size:12px; font-weight:700; color:#333; margin-bottom:10px; }
+  .strength-list { padding-left:18px; }
+  .strength-list li { font-size:12px; color:#444; line-height:1.85; margin-bottom:4px; }
+  .weakness-box { background:#FFF7ED; border:1px solid #FED7AA; border-radius:6px; padding:14px; }
+  .weakness-title { font-size:11px; font-weight:700; color:#92400e; margin-bottom:8px; }
+  .weakness-text { font-size:11px; color:#78350f; line-height:1.75; }
+
+  /* SCORE BAR */
+  .score-bar-row { margin-bottom:14px; }
+  .score-bar-header { display:flex; justify-content:space-between; margin-bottom:5px; font-size:11px; }
+  .score-bar-track { height:7px; background:#eee; border-radius:3px; overflow:hidden; }
+  .score-bar-fill { height:100%; background:linear-gradient(90deg, var(--navy), var(--amber)); border-radius:3px; transition:width 1s; }
+
+  /* STRATEGY */
+  .strategy-card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:22px 26px; margin-bottom:18px; }
+  .strategy-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+  .strategy-title { font-size:14px; font-weight:700; color:var(--navy); }
+  .priority-badge { padding:3px 12px; border-radius:12px; font-size:11px; font-weight:700; }
+  .strategy-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .strategy-item { padding:14px 16px; background:var(--gray-light); border-radius:6px; border:1px solid var(--border); }
+  .strategy-item-title { font-weight:700; font-size:13px; color:var(--navy); margin-bottom:6px; }
+  .strategy-item-desc { font-size:12px; color:#555; line-height:1.7; }
+
+  /* SCENARIO */
+  .scenario-card { border-radius:8px; padding:22px; border-top-width:4px; border-top-style:solid; }
+  .scenario-title { font-size:14px; font-weight:700; margin-bottom:8px; }
+  .scenario-opm { font-size:24px; font-weight:700; margin-bottom:8px; }
+  .scenario-desc { font-size:11px; line-height:1.75; color:#555; }
+
+  /* TAG */
+  .tag { display:inline-block; padding:2px 10px; border-radius:12px; font-size:11px; font-weight:600; margin-right:6px; margin-top:4px; }
+
+  /* CONCLUSION */
+  .conclusion { background:var(--navy); color:#fff; border-radius:8px; padding:32px 36px; margin-bottom:24px; }
+  .conclusion .sub-title { color:var(--amber); }
+  .conclusion p { font-size:14px; line-height:1.95; color:rgba(255,255,255,0.85); }
+  .conclusion-metrics { display:flex; gap:28px; margin-top:22px; flex-wrap:wrap; }
+  .conclusion-metric-label { font-size:10px; color:rgba(255,255,255,0.4); letter-spacing:1px; }
+  .conclusion-metric-value { font-size:18px; font-weight:700; color:var(--amber); margin-top:3px; }
+  .disclaimer { font-size:10px; color:rgba(255,255,255,0.3); margin-top:18px; line-height:1.7; }
+
+  /* ROADMAP */
+  .roadmap { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; }
+  .roadmap-col { padding:18px 22px; }
+  .roadmap-col:not(:last-child) { border-right:1px dashed var(--border); }
+  .roadmap-period { font-size:12px; font-weight:700; margin-bottom:14px; }
+  .roadmap-item { display:flex; gap:8px; margin-bottom:10px; align-items:flex-start; }
+  .roadmap-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+  .roadmap-text { font-size:12px; color:#444; }
+
+  /* PRINT */
+  @media print {
+    .nav { display:none; }
+    .card, .principle-card { break-inside:avoid; }
+    body { background:#fff; }
+  }
+
+  /* FLOW CHART */
+  .flow { display:flex; align-items:center; gap:0; overflow-x:auto; padding-bottom:8px; }
+  .flow-step { text-align:center; padding:14px 18px; min-width:95px; border-radius:6px; }
+  .flow-step-name { font-size:12px; font-weight:700; margin-top:6px; }
+  .flow-step-sub { font-size:10px; color:rgba(255,255,255,0.65); margin-top:3px; }
+  .flow-arrow { width:28px; flex-shrink:0; text-align:center; color:var(--amber); font-size:18px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="cover">
+  <div class="cover-inner">
+    <div>
+      <div class="cover-label">기업 구조적 경쟁력 분석 보고서</div>
+      <div class="cover-title">한세실업</div>
+      <div class="cover-sub">Hansae Co., Ltd. | KOSPI: 105630</div>
+      <div class="cover-metrics">
+        <div><div class="cover-metric-label">2024 매출</div><div class="cover-metric-value">1조 7,978억원</div></div>
+        <div><div class="cover-metric-label">영업이익률</div><div class="cover-metric-value">7.9%</div></div>
+        <div><div class="cover-metric-label">글로벌 생산거점</div><div class="cover-metric-value">7개국 13법인</div></div>
+        <div><div class="cover-metric-label">연간 생산량</div><div class="cover-metric-value">3억장+</div></div>
+      </div>
+    </div>
+    <div class="cover-right">
+      <div class="cover-date-label">작성일</div>
+      <div class="cover-date">2026년 5월</div>
+      <div class="buy-badge">BUY</div>
+      <div class="target-price">목표주가 15,000원</div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <a href="#summary" class="active">Executive Summary</a>
+  <a href="#intro">기업 소개</a>
+  <a href="#current">현재 상황</a>
+  <a href="#competitive">구조적 경쟁력 진단</a>
+  <a href="#strategy">전략 제안</a>
+  <a href="#outlook">미래 전망</a>
+</div>
+
+<div class="main">
+
+<!-- ====== SECTION 0: EXECUTIVE SUMMARY ====== -->
+<div id="summary">
+  <div class="section-title">
+    <div class="section-title-inner">
+      <div class="section-num"><span>0</span></div>
+      <div><h2>Executive Summary</h2><p>한세실업 구조적 경쟁력 종합 요약</p></div>
+    </div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="card" style="background:linear-gradient(135deg,#f0f4ff 0%,#fff 100%);border-color:#1a3a6b40;">
+    <p style="font-size:15px;line-height:1.95;color:#333;">
+      한세실업은 1982년 창립 이래 <strong>글로벌 의류 OEM/ODM 전문기업</strong>으로 성장하여, Nike·Gap·H&amp;M·Walmart 등 세계 유수 브랜드의 전략적 생산 파트너 위치를 확보하였다. 연간 3억 장 이상을 생산하며 7개국 13개 해외법인을 운영하는 한세실업의 핵심 경쟁력은 <strong>수직계열화 기반의 글로벌 공급망</strong>과 <strong>지역별 밀도 있는 생산 클러스터</strong>에 있다. 2024년 매출 1조 7,978억원, 영업이익 1,422억원(OPM 7.9%)을 기록하였으며, 2025년 미국 상호관세 이슈라는 단기 역풍에도 불구하고, 과테말라 수직계열화 완성(2026년 예정)을 통한 구조적 수익성 개선이 기대된다.
+    </p>
+  </div>
+
+  <div class="grid-3">
+    <div class="card" style="border-top:3px solid var(--green);padding:20px;">
+      <div style="font-size:12px;font-weight:700;color:var(--green);letter-spacing:1px;margin-bottom:12px;">▲ 핵심 강점</div>
+      <ul style="padding-left:16px;">
+        <li style="font-size:12px;line-height:1.85;">7개국 글로벌 공급망 분산</li>
+        <li style="font-size:12px;line-height:1.85;">베트남 수직계열화 완성</li>
+        <li style="font-size:12px;line-height:1.85;">DR-CAFTA 관세 혜택 활용</li>
+        <li style="font-size:12px;line-height:1.85;">연간 3억장+ 규모의 경쟁력</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--red);padding:20px;">
+      <div style="font-size:12px;font-weight:700;color:var(--red);letter-spacing:1px;margin-bottom:12px;">▼ 핵심 리스크</div>
+      <ul style="padding-left:16px;">
+        <li style="font-size:12px;line-height:1.85;">미국 매출 비중 90% 집중</li>
+        <li style="font-size:12px;line-height:1.85;">트럼프 상호관세 불확실성</li>
+        <li style="font-size:12px;line-height:1.85;">베트남(46%) 고관세 부담</li>
+        <li style="font-size:12px;line-height:1.85;">OPM 7%대 수익성 압박</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--amber);padding:20px;">
+      <div style="font-size:12px;font-weight:700;color:var(--amber);letter-spacing:1px;margin-bottom:12px;">◆ 핵심 기회</div>
+      <ul style="padding-left:16px;">
+        <li style="font-size:12px;line-height:1.85;">과테말라 수직계열화(2026)</li>
+        <li style="font-size:12px;line-height:1.85;">ODM 전환으로 고부가 확대</li>
+        <li style="font-size:12px;line-height:1.85;">유럽·일본 바이어 다변화</li>
+        <li style="font-size:12px;line-height:1.85;">액티브웨어 시장 성장</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sub-title">5대 구조적 경쟁력 원칙 종합 평가</div>
+    <table>
+      <thead><tr><th>원칙</th><th>핵심 요소</th><th>현재 수준</th><th>평가</th></tr></thead>
+      <tbody>
+        <tr><td>① 표준화·시스템·연결</td><td>글로벌 ERP, 3D 가상샘플, 표준화된 생산 복제</td><td style="color:var(--amber);">★★★★☆</td><td><span class="tag" style="background:#dbeafe;color:#1e40af;">강함</span></td></tr>
+        <tr><td>② 규모의 경쟁력</td><td>연 3억장+, 5만명, 7개국 13법인</td><td style="color:var(--amber);">★★★★★</td><td><span class="tag" style="background:#dcfce7;color:#166534;">매우 강함</span></td></tr>
+        <tr><td>③ 밀도의 경쟁력</td><td>베트남·니카라과·과테말라 생산 클러스터</td><td style="color:var(--amber);">★★★★☆</td><td><span class="tag" style="background:#dbeafe;color:#1e40af;">강함</span></td></tr>
+        <tr><td>④ 범위의 경쟁력</td><td>OEM+ODM, 니트+우븐, 다양한 바이어</td><td style="color:var(--amber);">★★★☆☆</td><td><span class="tag" style="background:#f3f4f6;color:#6b7280;">보통</span></td></tr>
+        <tr><td>⑤ 균형의 경쟁력</td><td>양대륙 수직계열화, 관세 리스크 분산</td><td style="color:var(--amber);">★★★☆☆</td><td><span class="tag" style="background:#fef3c7;color:#92400e;">개선 중</span></td></tr>
+        <tr><td>⑥ 지식·설계 역량*</td><td>ODM 디자인, AI 접목, 신소재 개발</td><td style="color:var(--amber);">★★★☆☆</td><td><span class="tag" style="background:#fef3c7;color:#92400e;">성장 단계</span></td></tr>
+      </tbody>
+    </table>
+    <p style="margin:10px 0 0;font-size:11px;color:var(--gray);">* 추가 발굴 원칙: ODM 전환 심화에 따른 지식·설계 경쟁력</p>
+  </div>
+</div>
+
+<!-- ====== SECTION 1: 기업 소개 ====== -->
+<div id="intro" style="margin-top:48px;">
+  <div class="section-title">
+    <div class="section-title-inner">
+      <div class="section-num"><span>1</span></div>
+      <div><h2>기업 소개</h2><p>Hansae Co., Ltd. — 글로벌 패션 OEM/ODM 전문기업</p></div>
+    </div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="grid-2-1">
+    <div class="card">
+      <div class="sub-title">기업 개요</div>
+      <table>
+        <tbody>
+          <tr><td class="td-key">설립연도</td><td>1982년 11월</td></tr>
+          <tr><td class="td-key">대표이사</td><td>김익환, 김경</td></tr>
+          <tr><td class="td-key">상장시장</td><td>KOSPI (종목코드: 105630)</td></tr>
+          <tr><td class="td-key">본사</td><td>서울특별시</td></tr>
+          <tr><td class="td-key">사업영역</td><td>의류 OEM/ODM 수출 전문</td></tr>
+          <tr><td class="td-key">해외법인</td><td>7개국 13개 해외법인</td></tr>
+          <tr><td class="td-key">임직원 수</td><td>약 5만명 (협력사 포함)</td></tr>
+          <tr><td class="td-key">주요 바이어</td><td>Nike, Gap, H&amp;M, Zara, Walmart, Target</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="card" style="background:var(--navy);color:#fff;text-align:center;padding:22px 16px;">
+        <div style="font-size:11px;color:var(--amber);letter-spacing:2px;margin-bottom:8px;">연간 생산량</div>
+        <div style="font-size:46px;font-weight:700;">3억+</div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.6);">장 / 年</div>
+      </div>
+      <div class="card" style="text-align:center;padding:18px;">
+        <div style="font-size:11px;color:var(--gray);letter-spacing:1px;margin-bottom:8px;">핵심 메시지</div>
+        <div style="font-size:14px;font-weight:700;color:var(--navy);font-style:italic;line-height:1.6;">"미국인 3명 중 1명은<br>한세실업의 옷을 입는다"</div>
+      </div>
+      <div class="card" style="padding:18px;">
+        <div style="font-size:11px;color:var(--gray);margin-bottom:10px;">사업 구조 비중</div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="font-weight:600;color:var(--navy);">OEM 사업</span><span style="color:var(--amber);font-weight:700;">96%</span></div>
+        <div style="height:8px;background:#eee;border-radius:4px;overflow:hidden;margin-bottom:10px;"><div style="height:100%;width:96%;background:linear-gradient(90deg,var(--navy),var(--steel));border-radius:4px;"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="font-weight:600;color:var(--navy);">원단 및 기타</span><span style="color:var(--amber);font-weight:700;">4%</span></div>
+        <div style="height:8px;background:#eee;border-radius:4px;overflow:hidden;"><div style="height:100%;width:4%;background:var(--amber);border-radius:4px;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sub-title">주요 바이어 포트폴리오</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+      <div style="padding:12px 14px;border:1px solid var(--border);border-radius:6px;border-left:4px solid #1a1a1a;"><div style="font-weight:700;font-size:13px;">Nike</div><div><span class="tag" style="background:#dbeafe20;color:var(--steel);border:1px solid #dbeafe;">스포츠웨어</span><span class="tag" style="background:#f3f4f6;color:var(--gray);border:1px solid var(--border);">프리미엄</span></div></div>
+      <div style="padding:12px 14px;border:1px solid var(--border);border-radius:6px;border-left:4px solid #0d4f8b;"><div style="font-weight:700;font-size:13px;">Gap / Old Navy</div><div><span class="tag" style="background:#dbeafe20;color:var(--steel);border:1px solid #dbeafe;">캐주얼</span><span class="tag" style="background:#f3f4f6;color:var(--gray);border:1px solid var(--border);">중가</span></div></div>
+      <div style="padding:12px 14px;border:1px solid var(--border);border-radius:6px;border-left:4px solid #1a3a6b;"><div style="font-weight:700;font-size:13px;">American Eagle</div><div><span class="tag" style="background:#dbeafe20;color:var(--steel);border:1px solid #dbeafe;">캐주얼</span><span class="tag" style="background:#f3f4f6;color:var(--gray);border:1px solid var(--border);">중가</span></div></div>
+      <div style="padding:12px 14px;border:1px solid var(--border);border-radius:6px;border-left:4px solid #e63946;"><div style="font-weight:700;font-size:13px;">H&amp;M</div><div><span class="tag" style="background:#dbeafe20;color:var(--steel);border:1px solid #dbeafe;">SPA</span><span class="tag" style="background:#f3f4f6;color:var(--gray);border:1px solid var(--border);">중저가</span></div></div>
+      <div style="padding:12px 14px;border:1px solid var(--border);border-radius:6px;border-left:4px solid #1a1a1a;"><div style="font-weight:700;font-size:13px;">Zara (Inditex)</div><div><span class="tag" style="background:#dbeafe20;color:var(--steel);border:1px solid #dbeafe;">SPA</span><span class="tag" style="background:#f3f4f6;color:var(--gray);border:1px solid var(--border);">중가</span></div></div>
+      <div style="padding:12px 14px;border:1px solid var(--border);border-radius:6px;border-left:4px solid #0071ce;"><div style="font-weight:700;font-size:13px;">Walmart / Target</div><div><span class="tag" style="background:#dbeafe20;color:var(--steel);border:1px solid #dbeafe;">마트 PB</span><span class="tag" style="background:#f3f4f6;color:var(--gray);border:1px solid var(--border);">저가</span></div></div>
+      <div style="padding:12px 14px;border:1px solid var(--border);border-radius:6px;border-left:4px solid #8B6914;"><div style="font-weight:700;font-size:13px;">Carhartt</div><div><span class="tag" style="background:#dbeafe20;color:var(--steel);border:1px solid #dbeafe;">워크웨어</span><span class="tag" style="background:#f3f4f6;color:var(--gray);border:1px solid var(--border);">중고가</span></div></div>
+      <div style="padding:12px 14px;border:1px solid var(--border);border-radius:6px;border-left:4px solid #c94b8b;"><div style="font-weight:700;font-size:13px;">PINK (Victoria's Secret)</div><div><span class="tag" style="background:#dbeafe20;color:var(--steel);border:1px solid #dbeafe;">이너웨어</span><span class="tag" style="background:#f3f4f6;color:var(--gray);border:1px solid var(--border);">중가</span></div></div>
+      <div style="padding:12px 14px;border:1px solid var(--border);border-radius:6px;border-left:4px solid #2d6a4f;"><div style="font-weight:700;font-size:13px;">Aeropostale</div><div><span class="tag" style="background:#dbeafe20;color:var(--steel);border:1px solid #dbeafe;">캐주얼</span><span class="tag" style="background:#f3f4f6;color:var(--gray);border:1px solid var(--border);">중저가</span></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sub-title">사업 구조 — Value Chain (수직계열화)</div>
+    <div class="flow">
+      <div class="flow-step" style="background:var(--navy);color:#fff;"><div style="font-size:22px;">🧵</div><div class="flow-step-name">원사</div><div class="flow-step-sub">섬유에서 실 추출</div></div>
+      <div class="flow-arrow">▶</div>
+      <div class="flow-step" style="background:var(--steel);color:#fff;"><div style="font-size:22px;">🏭</div><div class="flow-step-name">편직/직조</div><div class="flow-step-sub">원단 생산</div></div>
+      <div class="flow-arrow">▶</div>
+      <div class="flow-step" style="background:var(--navy);color:#fff;"><div style="font-size:22px;">🎨</div><div class="flow-step-name">염색·가공</div><div class="flow-step-sub">C&T Vina 전담</div></div>
+      <div class="flow-arrow">▶</div>
+      <div class="flow-step" style="background:var(--steel);color:#fff;"><div style="font-size:22px;">✂️</div><div class="flow-step-name">봉제</div><div class="flow-step-sub">의류 완성</div></div>
+      <div class="flow-arrow">▶</div>
+      <div class="flow-step" style="background:var(--navy);color:#fff;"><div style="font-size:22px;">🔍</div><div class="flow-step-name">품질검사</div><div class="flow-step-sub">바이어 기준</div></div>
+      <div class="flow-arrow">▶</div>
+      <div class="flow-step" style="background:var(--steel);color:#fff;"><div style="font-size:22px;">🚢</div><div class="flow-step-name">수출·납품</div><div class="flow-step-sub">리드타임 최소화</div></div>
+    </div>
+    <p style="margin-top:14px;font-size:12px;color:var(--gray);line-height:1.7;">※ 수직계열화: 한세실업은 원단 생산(편직·염색)부터 봉제까지 전 공정을 자체 법인 내에서 수행. 베트남에서 완성, 2026년 과테말라에서도 동일 체계 구축 예정.</p>
+  </div>
+</div>
+
+<!-- ====== SECTION 2: 현재 상황 ====== -->
+<div id="current" style="margin-top:48px;">
+  <div class="section-title">
+    <div class="section-title-inner">
+      <div class="section-num"><span>2</span></div>
+      <div><h2>현재 상황 분석</h2><p>재무 실적 · 생산거점 · 핵심 이슈</p></div>
+    </div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="grid-3" style="grid-template-columns:repeat(4,1fr);">
+    <div class="metric-card"><div class="metric-label">2024 매출액</div><div class="metric-value">1조 7,978억</div><div class="metric-change up">▲ YoY +5.2%</div></div>
+    <div class="metric-card"><div class="metric-label">2024 영업이익</div><div class="metric-value">1,422억</div><div class="metric-change down">▼ YoY -15.5%</div></div>
+    <div class="metric-card"><div class="metric-label">영업이익률(OPM)</div><div class="metric-value">7.9%</div><div class="metric-change up">▲ 2026E 10%</div></div>
+    <div class="metric-card"><div class="metric-label">2024 순이익</div><div class="metric-value">580억</div><div class="metric-change down">▼ YoY -48.2%</div></div>
+  </div>
+
+  <div class="card">
+    <div class="sub-title">연간 매출액 및 영업이익 추이 (2021~2026E)</div>
+    <div class="chart-container"><canvas id="annualChart"></canvas></div>
+    <p class="chart-note">자료: 한세실업, 삼성증권 리서치 (2025E·2026E는 컨센서스 기준 추정치)</p>
+  </div>
+
+  <div class="card">
+    <div class="sub-title">분기별 실적 추이 (2024~2025E)</div>
+    <div class="chart-container" style="height:250px;"><canvas id="quarterlyChart"></canvas></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="sub-title">글로벌 생산거점 분포</div>
+      <div class="chart-container" style="height:230px;"><canvas id="productionChart"></canvas></div>
+      <p class="chart-note">자료: 한세실업 2025년 IR 자료 기준</p>
+    </div>
+    <div class="card">
+      <div class="sub-title">2025년 핵심 이슈</div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="padding:12px 14px;border:1px solid var(--border);border-radius:6px;border-left:4px solid var(--red);">
+          <div style="font-weight:700;font-size:13px;color:var(--red);margin-bottom:4px;">⚠️ 미국 상호관세 리스크</div>
+          <p style="font-size:12px;color:#555;line-height:1.65;margin:0;">베트남 46% 관세 부과. 미국향 매출 90% 집중으로 단기 실적 압박. 중미 생산 전환 가속화 중.</p>
+        </div>
+        <div style="padding:12px 14px;border:1px solid var(--border);border-radius:6px;border-left:4px solid var(--green);">
+          <div style="font-weight:700;font-size:13px;color:var(--green);margin-bottom:4px;">🏭 과테말라 수직계열화 진행</div>
+          <p style="font-size:12px;color:#555;line-height:1.65;margin:0;">2026년 3분기 완성 목표. 리드타임 베트남 6개월→4개월로 단축.</p>
+        </div>
+        <div style="padding:12px 14px;border:1px solid var(--border);border-radius:6px;border-left:4px solid var(--steel);">
+          <div style="font-weight:700;font-size:13px;color:var(--steel);margin-bottom:4px;">📈 ODM 전환 가속화</div>
+          <p style="font-size:12px;color:#555;line-height:1.65;margin:0;">단순 OEM에서 디자인 포함 ODM으로 전환. 고단가 바이어 오더 확대 중.</p>
+        </div>
+        <div style="padding:12px 14px;border:1px solid var(--border);border-radius:6px;border-left:4px solid #059669;">
+          <div style="font-weight:700;font-size:13px;color:#059669;margin-bottom:4px;">🌿 ESG·친환경 설비 투자</div>
+          <p style="font-size:12px;color:#555;line-height:1.65;margin:0;">과테말라 공장에 친환경·스마트 설비 도입. 물·스팀 사용량 절감.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sub-title">주요 재무 지표 요약 (단위: 십억원)</div>
+    <table>
+      <thead><tr><th>구분</th><th>2022</th><th>2023</th><th>2024</th><th>2025E</th><th>2026E</th></tr></thead>
+      <tbody>
+        <tr><td class="td-key">매출액</td><td>2,205</td><td>1,709</td><td>1,798</td><td>1,909</td><td>2,001</td></tr>
+        <tr><td class="td-key">영업이익</td><td>223</td><td>167</td><td>142</td><td>128</td><td>200</td></tr>
+        <tr><td class="td-key">영업이익률</td><td>10.1%</td><td>9.8%</td><td>7.9%</td><td>6.7%</td><td>10.0%</td></tr>
+        <tr><td class="td-key">순이익</td><td>~138</td><td>~112</td><td>58</td><td>74</td><td>102</td></tr>
+        <tr><td class="td-key">EPS(원)</td><td>~3,450</td><td>~2,800</td><td>1,451</td><td>1,846</td><td>2,560</td></tr>
+      </tbody>
+    </table>
+    <p class="chart-note" style="margin-top:8px;">자료: 한세실업, 삼성증권·미래에셋 리서치. E=Estimate(추정치). 일부 수치는 공개 보고서 기준 추정.</p>
+  </div>
+</div>
+
+<!-- ====== SECTION 3: 구조적 경쟁력 ====== -->
+<div id="competitive" style="margin-top:48px;">
+  <div class="section-title">
+    <div class="section-title-inner">
+      <div class="section-num"><span>3</span></div>
+      <div><h2>구조적 경쟁력 진단</h2><p>5대 원칙 + 추가 발굴 원칙 기반 분석</p></div>
+    </div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="card">
+    <div class="sub-title">구조적 경쟁력 종합 스코어카드</div>
+    <div class="grid-2">
+      <div>
+        <div class="chart-container" style="height:280px;"><canvas id="radarChart"></canvas></div>
+      </div>
+      <div>
+        <div id="scoreBars"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Principle 1 -->
+  <div class="principle-card" style="border-left:5px solid var(--navy);">
+    <div class="principle-header">
+      <div class="principle-title-group">
+        <div class="principle-num" style="color:var(--navy);">①</div>
+        <div><div class="principle-name" style="color:var(--navy);">표준화·시스템·연결의 경쟁력</div><div class="principle-desc">글로벌 생산기지 간 표준화된 운영 시스템과 바이어-생산기지 연결 플랫폼</div></div>
+      </div>
+      <div class="principle-score"><div class="score-num" style="color:var(--navy);">75</div><div class="score-unit">/ 100점</div></div>
+    </div>
+    <div class="principle-body">
+      <div>
+        <div class="strength-title">▶ 주요 경쟁력 근거</div>
+        <ul class="strength-list">
+          <li>베트남 수직계열화 성공 방정식을 과테말라에 동일하게 적용하는 <strong>'표준 복제' 전략</strong> — 검증된 시스템을 새 거점에 이식함으로써 초기 가동 리스크 최소화</li>
+          <li><strong>3D 가상샘플 시스템</strong> 도입: 물리적 샘플 없이 디지털로 원단 질감·컬러 구현, 개발 리드타임 단축 및 샘플 폐기물 절감</li>
+          <li>HCM(호찌민) 법인을 <strong>글로벌 회계 통합 허브</strong>로 구축 중 — 아시아 지역부터 시작해 전 법인 데이터 표준화 진행</li>
+          <li>통합 관리 시스템으로 편직-염색-봉제 공정 간 효율화 및 자동화 추진</li>
+        </ul>
+      </div>
+      <div class="weakness-box">
+        <div class="weakness-title">⚠ 취약점</div>
+        <div class="weakness-text">바이어별 개별 대응 시스템이 많아 플랫폼 통합도 개선 필요. 실시간 공급망 가시성 제공 수준이 글로벌 선진사 대비 미흡.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Principle 2 -->
+  <div class="principle-card" style="border-left:5px solid var(--steel);">
+    <div class="principle-header">
+      <div class="principle-title-group">
+        <div class="principle-num" style="color:var(--steel);">②</div>
+        <div><div class="principle-name" style="color:var(--steel);">규모의 경쟁력</div><div class="principle-desc">연간 3억 장 이상의 생산 규모가 만들어내는 원가 우위 및 협상력</div></div>
+      </div>
+      <div class="principle-score"><div class="score-num" style="color:var(--steel);">82</div><div class="score-unit">/ 100점</div></div>
+    </div>
+    <div class="principle-body">
+      <div>
+        <div class="strength-title">▶ 주요 경쟁력 근거</div>
+        <ul class="strength-list">
+          <li>연간 3억 장+ 생산 규모로 <strong>원자재(원사·원단) 구매 단가 우위</strong> 확보 — 소규모 경쟁사 대비 원가 구조 차별화</li>
+          <li>7개국 13개 해외법인, 협력업체 포함 약 <strong>5만명 규모</strong>의 글로벌 생산 네트워크</li>
+          <li>Nike, Gap, Walmart 등 <strong>대형 글로벌 바이어와의 장기 파트너십</strong>: 안정적 오더 확보 및 관계 진입장벽</li>
+          <li>규모 기반의 물류 협상력으로 컨테이너 운임 단가 절감 가능</li>
+        </ul>
+      </div>
+      <div class="weakness-box">
+        <div class="weakness-title">⚠ 취약점</div>
+        <div class="weakness-text">중저가 제품 중심이라 원가 상승(인건비·원자재) 전가가 어려운 구조. 규모가 있어도 마진이 얇은 구조적 한계.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Principle 3 -->
+  <div class="principle-card" style="border-left:5px solid var(--navy-light);">
+    <div class="principle-header">
+      <div class="principle-title-group">
+        <div class="principle-num" style="color:var(--navy-light);">③</div>
+        <div><div class="principle-name" style="color:var(--navy-light);">밀도의 경쟁력</div><div class="principle-desc">특정 지역 내 생산기지 집중으로 얻는 물류 효율 및 품질 관리 우위</div></div>
+      </div>
+      <div class="principle-score"><div class="score-num" style="color:var(--navy-light);">78</div><div class="score-unit">/ 100점</div></div>
+    </div>
+    <div class="principle-body">
+      <div>
+        <div class="strength-title">▶ 주요 경쟁력 근거</div>
+        <ul class="strength-list">
+          <li><strong>베트남 클러스터</strong>: 호찌민-빈푹-티엔장 3개 지역에 총 23만6천 평 규모. 전체 생산량의 62% 집중. 단지 내 편직→염색→봉제 완결</li>
+          <li><strong>니카라과 클러스터</strong>: 6개 공장 집중 운영, 전체 생산량의 30% 담당. 미국과의 지리적 근접성 활용</li>
+          <li><strong>과테말라 미차토야 산업단지</strong>: 에코스핀(원사)·C&T과테말라(원단·염색) 공장을 동일 부지에 건설 중 (2026년 완성)</li>
+          <li>지리적 집중으로 <strong>공정 간 이동 거리 최소화</strong>, 품질 관리 용이, 공정 간 물류비 절감</li>
+        </ul>
+      </div>
+      <div class="weakness-box">
+        <div class="weakness-title">⚠ 취약점</div>
+        <div class="weakness-text">베트남 정치·관세 리스크가 생산량 62%에 집중. 지역 분산 구조로 전환 중이나 완성까지 추가 투자 및 시간 필요.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Principle 4 -->
+  <div class="principle-card" style="border-left:5px solid #2d6a4f;">
+    <div class="principle-header">
+      <div class="principle-title-group">
+        <div class="principle-num" style="color:#2d6a4f;">④</div>
+        <div><div class="principle-name" style="color:#2d6a4f;">범위의 경쟁력</div><div class="principle-desc">다양한 제품 카테고리와 바이어 유형을 아우르는 사업 범위의 경쟁력</div></div>
+      </div>
+      <div class="principle-score"><div class="score-num" style="color:#2d6a4f;">60</div><div class="score-unit">/ 100점</div></div>
+    </div>
+    <div class="principle-body">
+      <div>
+        <div class="strength-title">▶ 주요 경쟁력 근거</div>
+        <ul class="strength-list">
+          <li><strong>니트(티셔츠·이너웨어)</strong>와 <strong>우븐(셔츠·정장류)</strong> 양대 소재 생산 역량 보유 — 바이어 요구 대응 폭 확대</li>
+          <li>프리미엄 스포츠웨어(Nike)부터 마트 PB(Walmart·Target)까지 <strong>가격대 다양성 대응</strong></li>
+          <li><strong>텍솔리니(Texollini) 인수</strong>로 화학섬유·액티브웨어 분야 신규 진입 — 범위 확장</li>
+          <li>미국 중심에서 유럽(H&M·Zara), 일본으로 바이어 다변화 진행 중</li>
+        </ul>
+      </div>
+      <div class="weakness-box">
+        <div class="weakness-title">⚠ 취약점</div>
+        <div class="weakness-text">미국 매출 비중 90%로 지역 범위 심각한 편중. 자체 브랜드 부재로 브랜드·리테일 영역 진출 한계.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Principle 5 -->
+  <div class="principle-card" style="border-left:5px solid #92400e;">
+    <div class="principle-header">
+      <div class="principle-title-group">
+        <div class="principle-num" style="color:#92400e;">⑤</div>
+        <div><div class="principle-name" style="color:#92400e;">균형의 경쟁력 (통합 비용 관점)</div><div class="principle-desc">수직계열화와 유연성, 지역 분산과 집중, 원가와 품질 간의 전략적 균형</div></div>
+      </div>
+      <div class="principle-score"><div class="score-num" style="color:#92400e;">65</div><div class="score-unit">/ 100점</div></div>
+    </div>
+    <div class="principle-body">
+      <div>
+        <div class="strength-title">▶ 주요 경쟁력 근거</div>
+        <ul class="strength-list">
+          <li><strong>양대륙 이원화 전략</strong>: 동반구(베트남·인도네시아) ↔ 서반구(니카라과·과테말라·아이티) — 관세·지정학 리스크 헤지</li>
+          <li><strong>DR-CAFTA 무관세 혜택</strong> 국가(과테말라 10%, 니카라과 18%)를 미국향 허브로, 베트남을 유럽·일본향으로 이원화 추진</li>
+          <li>수직계열화 공정과 외주 봉제 공정의 <strong>병행 운영으로 물량 유연성</strong> 확보</li>
+          <li>고단가 ODM(Carhartt·액티브웨어) + 저단가 OEM(마트 PB) <strong>포트폴리오 균형</strong></li>
+        </ul>
+      </div>
+      <div class="weakness-box">
+        <div class="weakness-title">⚠ 취약점</div>
+        <div class="weakness-text">수직계열화 투자 확대로 고정비 급증. 단기 수익성 압박. 투자 회수까지 2~3년 이상 소요 예상.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Principle 6 (추가) -->
+  <div class="principle-card" style="border-left:5px solid var(--amber);">
+    <div class="principle-header">
+      <div class="principle-title-group">
+        <div class="principle-num" style="color:var(--amber);">⑥</div>
+        <div><div class="principle-name" style="color:var(--amber);">지식·설계 경쟁력 <span style="font-size:11px;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:10px;margin-left:8px;">추가 발굴 원칙</span></div><div class="principle-desc">OEM에서 ODM으로의 전환 심화에 따른 지식·설계 역량의 경쟁력화</div></div>
+      </div>
+      <div class="principle-score"><div class="score-num" style="color:var(--amber);">55</div><div class="score-unit">/ 100점</div></div>
+    </div>
+    <div class="principle-body">
+      <div>
+        <div class="strength-title">▶ 주요 경쟁력 근거</div>
+        <ul class="strength-list">
+          <li><strong>3D 가상샘플 기술</strong>로 바이어와의 초기 단계부터 디자인 협업 가능 → ODM 부가가치 창출의 핵심 도구</li>
+          <li><strong>뉴욕 R&D 센터</strong> 운영: 글로벌 트렌드를 제조 역량과 연결하는 전방 디자인 역량 구축 중</li>
+          <li>신소재 개발 및 친환경 섬유 연구 투자 — 기술 차별화를 통한 바이어 관계 심화</li>
+          <li>글로벌 바이어들의 ODM 구매 증가 추세에 선제 대응하는 전략적 포지셔닝</li>
+        </ul>
+      </div>
+      <div class="weakness-box">
+        <div class="weakness-title">⚠ 취약점</div>
+        <div class="weakness-text">아직 OEM 비중 96%로 압도적. 설계·디자인 역량이 구조적 경쟁력으로 전환되기까지 장기간 투자 및 조직 역량 축적 필요.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SECTION 4: 전략 제안 ====== -->
+<div id="strategy" style="margin-top:48px;">
+  <div class="section-title">
+    <div class="section-title-inner">
+      <div class="section-num"><span>4</span></div>
+      <div><h2>전략 제안</h2><p>5대 원칙 기반 구조적 경쟁력 확보 및 고도화 전략</p></div>
+    </div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="card" style="background:#fffbf0;border-color:#FED7AA;">
+    <div class="sub-title">전략 로드맵 개요</div>
+    <div class="roadmap">
+      <div class="roadmap-col">
+        <div class="roadmap-period" style="color:var(--red);">단기 (2025~2026)</div>
+        <div class="roadmap-item"><div class="roadmap-dot" style="background:var(--red);"></div><div class="roadmap-text">AI 통합 생산관리 플랫폼 구축</div></div>
+        <div class="roadmap-item"><div class="roadmap-dot" style="background:var(--red);"></div><div class="roadmap-text">3D 샘플링 전면 확대</div></div>
+        <div class="roadmap-item"><div class="roadmap-dot" style="background:var(--red);"></div><div class="roadmap-text">양대륙 이원화 공식화</div></div>
+      </div>
+      <div class="roadmap-col">
+        <div class="roadmap-period" style="color:var(--steel);">중기 (2026~2028)</div>
+        <div class="roadmap-item"><div class="roadmap-dot" style="background:var(--steel);"></div><div class="roadmap-text">과테말라 수직계열화 완성</div></div>
+        <div class="roadmap-item"><div class="roadmap-dot" style="background:var(--steel);"></div><div class="roadmap-text">유럽·일본 바이어 확대</div></div>
+        <div class="roadmap-item"><div class="roadmap-dot" style="background:var(--steel);"></div><div class="roadmap-text">액티브웨어 시장 진입</div></div>
+      </div>
+      <div class="roadmap-col">
+        <div class="roadmap-period" style="color:var(--navy);">장기 (2028~)</div>
+        <div class="roadmap-item"><div class="roadmap-dot" style="background:var(--navy);"></div><div class="roadmap-text">ODM 비중 30%+ 목표</div></div>
+        <div class="roadmap-item"><div class="roadmap-dot" style="background:var(--navy);"></div><div class="roadmap-text">유럽 생산 거점 구축 검토</div></div>
+        <div class="roadmap-item"><div class="roadmap-dot" style="background:var(--navy);"></div><div class="roadmap-text">자체 지속가능 소재 개발</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="strategyCards"></div>
+</div>
+
+<!-- ====== SECTION 5: 미래 전망 ====== -->
+<div id="outlook" style="margin-top:48px;">
+  <div class="section-title">
+    <div class="section-title-inner">
+      <div class="section-num"><span>5</span></div>
+      <div><h2>미래 성장 전망</h2><p>2026~2027년 시나리오 분석 및 장기 성장 로드맵</p></div>
+    </div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="grid-3">
+    <div class="scenario-card" style="background:#dcfce7;border-color:#86efac;border-style:solid;border-width:1px;">
+      <div class="scenario-title" style="color:var(--green);">🐂 Bull Case</div>
+      <div class="scenario-opm" style="color:var(--green);">OPM 11~12%</div>
+      <div class="scenario-desc">과테말라 수직계열화 조기 완성 + 관세 협상 타결 + 고단가 ODM 오더 급증으로 수익성 빠르게 회복</div>
+    </div>
+    <div class="scenario-card" style="background:#dbeafe;border-color:#93c5fd;border-style:solid;border-width:1px;">
+      <div class="scenario-title" style="color:var(--steel);">🐄 Base Case</div>
+      <div class="scenario-opm" style="color:var(--steel);">OPM 9~10%</div>
+      <div class="scenario-desc">과테말라 2026년 3Q 예정대로 완성. 미국 관세 지속되나 중미 생산 전환으로 점진적 수익성 만회</div>
+    </div>
+    <div class="scenario-card" style="background:#fee2e2;border-color:#fca5a5;border-style:solid;border-width:1px;">
+      <div class="scenario-title" style="color:var(--red);">🐻 Bear Case</div>
+      <div class="scenario-opm" style="color:var(--red);">OPM 6~7%</div>
+      <div class="scenario-desc">관세 장기화 + 글로벌 소비 침체 + 과테말라 가동 지연으로 수익성 회복이 2028년 이후로 미뤄지는 시나리오</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sub-title">매출·영업이익률 전망 (2021~2027E)</div>
+    <div class="chart-container"><canvas id="outlookChart"></canvas></div>
+    <p class="chart-note">※ 2027E는 과테말라 수직계열화 완성 효과 반영한 Base Case 기준 추정치</p>
+  </div>
+
+  <div class="card">
+    <div class="sub-title">장기 성장 동인 분석</div>
+    <div class="grid-2">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:12px;">🚀 성장 촉진 요인</div>
+        <div id="growthFactors"></div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:12px;">⚠ 성장 제약 요인</div>
+        <div id="riskFactors"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="conclusion">
+    <div class="sub-title">종합 투자 의견</div>
+    <p>한세실업은 <strong>규모와 밀도의 경쟁력</strong>을 기반으로 글로벌 의류 OEM 시장에서 독보적인 위치를 점하고 있으며, 현재 진행 중인 <strong>과테말라 수직계열화(2026년 완성)</strong>는 구조적 수익성 개선의 핵심 촉매제가 될 것으로 판단한다. 2025년은 미국 상호관세 불확실성으로 인해 수익성이 일시적으로 압박받겠으나, DR-CAFTA 활용 중미 생산 비중 확대와 ODM 전환 가속화로 <strong>2026년 OPM 10% 달성</strong>은 유효하다. 중장기적으로는 <strong>양대륙 수직계열화 완성</strong>과 <strong>지식·설계 역량 내재화</strong>가 한세실업을 단순 제조 벤더에서 글로벌 패션 공급망 솔루션 기업으로 전환시키는 핵심 방향이 될 것이다.</p>
+    <div class="conclusion-metrics">
+      <div><div class="conclusion-metric-label">투자의견</div><div class="conclusion-metric-value">BUY</div></div>
+      <div><div class="conclusion-metric-label">목표주가</div><div class="conclusion-metric-value">15,000원</div></div>
+      <div><div class="conclusion-metric-label">2026E OPM</div><div class="conclusion-metric-value">10.0%</div></div>
+      <div><div class="conclusion-metric-label">2027E 매출</div><div class="conclusion-metric-value">2.1조원</div></div>
+    </div>
+    <div class="disclaimer">※ 본 보고서는 학술적 분석 목적으로 작성되었으며, 실제 투자 의사결정의 근거로 활용할 수 없습니다. 목표주가 및 실적 추정치는 공개된 증권사 리서치 자료를 참고한 것입니다.</div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ── CHARTS ──
+const NAVY='#0B2545', STEEL='#2d6a8f', AMBER='#E8A020', RED='#DC2626', GREEN='#059669';
+
+// Annual Chart
+new Chart(document.getElementById('annualChart'), {
+  data: {
+    labels: ['2021','2022','2023','2024','2025E','2026E'],
+    datasets: [
+      { type:'bar', label:'매출액(십억원)', data:[1728,2205,1709,1798,1909,2001], backgroundColor:NAVY+'CC', yAxisID:'y' },
+      { type:'bar', label:'영업이익(십억원)', data:[180,223,167,142,128,200], backgroundColor:AMBER+'CC', yAxisID:'y' },
+      { type:'line', label:'OPM(%)', data:[10.4,10.1,9.8,7.9,6.7,10.0], borderColor:RED, backgroundColor:'transparent', borderWidth:2.5, pointBackgroundColor:RED, pointRadius:5, yAxisID:'y1' }
+    ]
+  },
+  options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ font:{ size:12 } } } },
+    scales: { y:{ position:'left', ticks:{ font:{size:11} } }, y1:{ position:'right', min:0, max:15, ticks:{ callback:v=>v+'%', font:{size:11} }, grid:{ drawOnChartArea:false } } }
+  }
+});
+
+// Quarterly Chart
+new Chart(document.getElementById('quarterlyChart'), {
+  data: {
+    labels: ['1Q24','2Q24','3Q24','4Q24','1Q25','2Q25E','3Q25E','4Q25E'],
+    datasets: [
+      { type:'bar', label:'매출액(십억)', data:[412,448,534,404,467,471,556,416], backgroundColor:NAVY+'BB', yAxisID:'y' },
+      { type:'bar', label:'영업이익(십억)', data:[38,43,45,16,20,28,41,23], backgroundColor:AMBER+'BB', yAxisID:'y' },
+      { type:'line', label:'OPM(%)', data:[9.2,9.6,8.4,4.0,4.3,5.9,7.4,5.5], borderColor:RED, backgroundColor:'transparent', borderWidth:2, pointBackgroundColor:RED, pointRadius:4, yAxisID:'y1' }
+    ]
+  },
+  options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ font:{size:12} } } },
+    scales: { y:{ position:'left', ticks:{ font:{size:11} } }, y1:{ position:'right', min:0, max:15, ticks:{ callback:v=>v+'%', font:{size:11} }, grid:{ drawOnChartArea:false } } }
+  }
+});
+
+// Production Pie
+new Chart(document.getElementById('productionChart'), {
+  type:'doughnut',
+  data: {
+    labels: ['베트남','니카라과','인도네시아','과테말라','기타'],
+    datasets: [{ data:[39,30,12,9,10], backgroundColor:[NAVY,STEEL,'#457b9d',AMBER,'#9CA3AF'], borderWidth:2, borderColor:'#fff' }]
+  },
+  options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ font:{size:11}, padding:12 } } } }
+});
+
+// Radar
+new Chart(document.getElementById('radarChart'), {
+  type:'radar',
+  data: {
+    labels: ['표준화·시스템·연결','규모의 경쟁력','밀도의 경쟁력','범위의 경쟁력','균형의 경쟁력','지식·설계 역량'],
+    datasets: [{ label:'한세실업', data:[75,82,78,60,65,55], backgroundColor:NAVY+'30', borderColor:AMBER, borderWidth:2, pointBackgroundColor:AMBER, pointRadius:5 }]
+  },
+  options: { responsive:true, maintainAspectRatio:false, scales:{ r:{ min:0, max:100, ticks:{ font:{size:10} }, pointLabels:{ font:{size:10} } } }, plugins:{ legend:{ labels:{ font:{size:12} } } } }
+});
+
+// Outlook Chart
+new Chart(document.getElementById('outlookChart'), {
+  data: {
+    labels: ['2021','2022','2023','2024','2025E','2026E','2027E'],
+    datasets: [
+      { type:'bar', label:'매출액(십억원)', data:[1728,2205,1709,1798,1909,2001,2120], backgroundColor:NAVY+'BB', yAxisID:'y' },
+      { type:'line', label:'OPM(%)', data:[10.4,10.1,9.8,7.9,6.7,10.0,10.9], borderColor:AMBER, backgroundColor:'transparent', borderWidth:2.5, pointBackgroundColor:AMBER, pointRadius:5, yAxisID:'y1' }
+    ]
+  },
+  options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ font:{size:12} } } },
+    scales: { y:{ position:'left', ticks:{ font:{size:11} } }, y1:{ position:'right', min:0, max:15, ticks:{ callback:v=>v+'%', font:{size:11} }, grid:{ drawOnChartArea:false } } }
+  }
+});
+
+// Score Bars
+const scores = [
+  { label:'표준화·시스템·연결', score:75, color:NAVY },
+  { label:'규모의 경쟁력', score:82, color:STEEL },
+  { label:'밀도의 경쟁력', score:78, color:'#1a3a6b' },
+  { label:'범위의 경쟁력', score:60, color:'#2d6a4f' },
+  { label:'균형의 경쟁력', score:65, color:'#92400e' },
+  { label:'지식·설계 역량', score:55, color:AMBER },
+];
+const barsEl = document.getElementById('scoreBars');
+scores.forEach(s => {
+  barsEl.innerHTML += `<div class="score-bar-row"><div class="score-bar-header"><span style="font-size:11px;font-weight:600;color:${s.color};">${s.label}</span><span style="font-weight:700;color:${s.color};">${s.score}</span></div><div class="score-bar-track"><div class="score-bar-fill" style="width:${s.score}%;"></div></div></div>`;
+});
+
+// Strategy Cards
+const strategies = [
+  { principle:'① 표준화·시스템·연결', priority:'단기', color:'#DC2626', bgColor:'#fee2e2',
+    items:[
+      { title:'AI 기반 통합 생산 관리 플랫폼 구축', desc:'전 법인 실시간 생산 데이터 통합, AI 예측으로 바이어 납기 정확도 제고. 바이어 포털 연결로 주문-생산-납품 가시성 확보.' },
+      { title:'3D 디지털 샘플링 전면 확대', desc:'물리적 샘플 제작 최소화. 개발 기간 단축 → ODM 전환 속도 가속화. 폐기물 절감 및 ESG 기여.' }
+    ]},
+  { principle:'② 규모의 경쟁력', priority:'중기', color:STEEL, bgColor:'#dbeafe',
+    items:[
+      { title:'과테말라 수직계열화 완성으로 규모 확장', desc:'2026년 3분기 완성 시 생산 CAPA 증가. 미국향 물량 안정적 수용 → 신규 바이어 유치 용이.' },
+      { title:'고단가 품목 오더 비중 확대', desc:'Carhartt·액티브웨어 등 고단가 바이어 집중 영업. 동일 생산량에서 매출·이익 동반 성장 구조 구축.' }
+    ]},
+  { principle:'③ 밀도의 경쟁력', priority:'중기', color:'#1a3a6b', bgColor:'#dbeafe',
+    items:[
+      { title:'과테말라 클러스터의 베트남 수준 밀도화', desc:'미차토야 산업단지 내 원사-원단-봉제 전 공정 집적. 단지 내 완결 물류 체계 구축으로 원가 최소화.' },
+      { title:'유럽향 생산 거점 신규 확보 검토', desc:'미국 90% 편중 해소. 터키·모로코 등 유럽 근접 거점 소규모 검토.' }
+    ]},
+  { principle:'④ 범위의 경쟁력', priority:'중장기', color:'#2d6a4f', bgColor:'#dcfce7',
+    items:[
+      { title:'미국→유럽·일본 바이어 다변화', desc:'유럽 SPA 물량 확대, 일본 바이어 신규 확보로 지역 범위 확장. 관세 리스크 완충 효과.' },
+      { title:'텍솔리니 활용 액티브웨어 브랜드 공략', desc:'화학섬유 역량으로 Lululemon 등 프리미엄 액티브웨어 오더 공략. 고마진 품목 비중 확대.' }
+    ]},
+  { principle:'⑤ 균형의 경쟁력', priority:'단기·중기', color:'#92400e', bgColor:'#fef3c7',
+    items:[
+      { title:'양대륙 이원화 전략 공식화', desc:'미국향은 DR-CAFTA 중미로, 유럽·일본향은 베트남·인도네시아로 공식 이원화. 관세 최적화 구조 완성.' },
+      { title:'고정비 관리 및 단계적 자동화', desc:'수직계열화 고정비 증가에 대응해 자동화 도입으로 변동비 절감. 단기 OPM 방어.' }
+    ]},
+  { principle:'⑥ 지식·설계 역량 (추가)', priority:'장기', color:AMBER, bgColor:'#fef3c7',
+    items:[
+      { title:'ODM 설계 역량 조직화·내재화', desc:'뉴욕 R&D 센터 기능 강화. 트렌드-소재-생산 파이프라인 조직화. ODM 비중 10%→30% 목표.' },
+      { title:'지속가능 소재 기술 선점', desc:'리사이클 섬유, 바이오 기반 소재 개발 투자. ESG 강화 바이어들과의 장기 계약 경쟁력 확보.' }
+    ]},
+];
+const scEl = document.getElementById('strategyCards');
+strategies.forEach(s => {
+  scEl.innerHTML += `<div class="strategy-card"><div class="strategy-header"><div class="strategy-title">${s.principle}</div><span class="priority-badge" style="background:${s.bgColor};color:${s.color};">● ${s.priority}</span></div><div class="strategy-grid">${s.items.map(it=>`<div class="strategy-item"><div class="strategy-item-title">→ ${it.title}</div><div class="strategy-item-desc">${it.desc}</div></div>`).join('')}</div></div>`;
+});
+
+// Growth Factors
+const growthFactors = [
+  ['과테말라 수직계열화 (2026)','리드타임 2개월 단축 → 미국 바이어 경쟁력 강화'],
+  ['ODM 전환 심화','부가가치 상승, 마진 개선 구조 확립'],
+  ['액티브웨어 시장 성장','글로벌 액티브웨어 연 8%+ 성장 지속'],
+  ['유럽·일본 바이어 다변화','미국 의존도 감소, 관세 헤지 효과'],
+  ['ESG 인증 설비','바이어 지속가능성 기준 강화에 선제 대응'],
+];
+const gEl = document.getElementById('growthFactors');
+growthFactors.forEach(([k,v]) => {
+  gEl.innerHTML += `<div style="display:flex;gap:10px;margin-bottom:10px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px;"></div><div><div style="font-size:12px;font-weight:700;color:#333;">${k}</div><div style="font-size:11px;color:var(--gray);">${v}</div></div></div>`;
+});
+const riskFactors = [
+  ['미국 상호관세 장기화','베트남 46% 관세 → 수익성 구조적 압박'],
+  ['중미 인건비 상승','아시아 대비 높은 인건비로 원가 부담'],
+  ['경쟁사(세아상역·영원무역) 추격','동일 전략 경쟁 심화'],
+  ['글로벌 소비 침체 리스크','미국 경기 둔화 시 바이어 오더 축소'],
+  ['ODM 전환 속도 지연','기존 OEM 관성으로 설계 역량 축적 지연'],
+];
+const rEl = document.getElementById('riskFactors');
+riskFactors.forEach(([k,v]) => {
+  rEl.innerHTML += `<div style="display:flex;gap:10px;margin-bottom:10px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:5px;"></div><div><div style="font-size:12px;font-weight:700;color:#333;">${k}</div><div style="font-size:11px;color:var(--gray);">${v}</div></div></div>`;
+});
+
+// NAV smooth scroll
+document.querySelectorAll('.nav a').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelectorAll('.nav a').forEach(x => x.classList.remove('active'));
+    a.classList.add('active');
+    const target = document.querySelector(a.getAttribute('href'));
+    if(target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+  });
+});
+</script>
+</body>
+</html>
